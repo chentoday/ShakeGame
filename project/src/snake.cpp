@@ -1,34 +1,52 @@
-#include "shake.h"
+#include "snake.h"
 
-bool Shake::IsShakeCollision(int hx, int hy)
+bool Snake::IsSnakeCollision(int hx, int hy)
 {
+    // 墙壁碰撞
     if (hx > 5 || hx < 1 || hy > 5 || hy < 1)
         return true;
-    // for (int t = 0; t < shakeLen; t++)
-    // {
-    //     if (hx == shakeLenX[t])
-    //         for (int i = 0; i < shakeLen; i++)
-    //         {
-    //             if (hy == shakeLenY[t])
-    //                 return true;
-    //         }
-    // }
+
+    // 自身碰撞
+    for (int t = 0; t < snakeLen-1; t++)
+    {
+        if (hx == snakeLenX[t])
+            for (int i = 0; i < snakeLen-1; i++)
+            {
+                if (hy == snakeLenY[t])
+                    return true;
+            }
+    }
     return false;
 }
 
 // 更新蛇的长度
-void Shake::updateShakePosition()
+void Snake::updateSnakePosition(bool appleFlag,int tx,int ty)
 {
-    for (int t = 0; t < shakeLen - 1; t++)
+    if (!appleFlag)
     {
-        shakeLenX[t] = shakeLenX[t + 1];
-        shakeLenY[t] = shakeLenY[t + 1];
+        for (int t = 0; t < snakeLen - 1; t++)
+        {
+            snakeLenX[t] = snakeLenX[t + 1];
+            snakeLenY[t] = snakeLenY[t + 1];
+        }
+        snakeLenX[snakeLen - 1] = hx;
+        snakeLenY[snakeLen - 1] = hy;
     }
-    shakeLenX[shakeLen - 1] = hx;
-    shakeLenY[shakeLen - 1] = hy;
+    else
+    {
+        for (int t = (snakeLen - 2); t >0; t--)
+        {
+            snakeLenX[t] = snakeLenX[t - 1];
+            snakeLenY[t] = snakeLenY[t - 1];
+        }
+        snakeLenX[snakeLen - 1] = hx;
+        snakeLenY[snakeLen - 1] = hy;
+        snakeLenX[0]=tx;
+        snakeLenY[0]=ty;
+    }
 }
 
-void Shake::DirectionAndCount()
+void Snake::DirectionAndCount()
 {
     if (hdirection == "right")
     {
@@ -83,7 +101,7 @@ void Shake::DirectionAndCount()
         }
     }
 }
-bool Shake::Key_Scan()
+bool Snake::Key_Scan()
 {
     static u_char key_up = 1;
     keyDirection = "_S";
@@ -105,9 +123,9 @@ bool Shake::Key_Scan()
     {
         key_up = 1;
         return false;
-    }else
-    {
-       return false;
     }
-    
+    else
+    {
+        return false;
+    }
 }
